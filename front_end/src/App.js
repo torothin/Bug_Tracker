@@ -9,23 +9,22 @@ import './App.css';
 class App extends React.Component {
   
   state = {
-    data: null,
+    users: null,
   }
   
   componentDidMount() {
-    fetch('http://http://localhost:4000/')
+    fetch('http://localhost:4000/api/users')
       .then(res => res.json())
       .then( ({data}) => {
-        console.log(data);
+        this.setState({users: data});
       });
   }
 
   render() {
     return (
       <div className="App">
-        <DashBoard>
+        <DashBoard users={this.state.users}/>
           
-        </DashBoard>
       </div>
     );
   }

@@ -1,9 +1,9 @@
 import React from 'react';
 import './dashboard.styles.scss';
 
-const DashBoard = () => (
+const DashBoard = (users) => (
     <div className='dashboard-container'>
-        <p>dashboard</p>
+        <p>{users}</p>
     </div>
 )
 

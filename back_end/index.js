@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
+const cors = require('cors');
 
 // create connection
 const db = mysql.createConnection({
@@ -17,6 +18,8 @@ db.connect((err) => {
 })
 
 const app = express();
+
+app.use(cors());
 
 app.listen('4000', () => {
     console.log("server started on port 4000");
@@ -92,7 +95,9 @@ app.get('/api/users', (req,res) => {
     const sql = 'SELECT * FROM bugTracker.users';
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            data: result
+        });
     });
 });
 
@@ -101,7 +106,9 @@ app.get('/api/users/:id', (req,res) => {
     const sql = `SELECT * FROM bugTracker.users WHERE id = ${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            data: result
+        });
     });
 });
 
