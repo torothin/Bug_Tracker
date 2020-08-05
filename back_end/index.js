@@ -96,7 +96,7 @@ app.get('/api/users', (req,res) => {
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
         res.json({
-            data: result
+            users: result
         });
     });
 });
@@ -107,7 +107,7 @@ app.get('/api/users/:id', (req,res) => {
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
         res.json({
-            data: result
+            user: result
         });
     });
 });
@@ -223,7 +223,9 @@ app.get('/api/tickets', (req,res) => {
     const sql = 'SELECT * FROM bugTracker.tickets';
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            tickets: result
+        });
     });
 });
 
@@ -233,7 +235,9 @@ app.get('/api/tickets/:id', (req,res) => {
     const sql = `SELECT * FROM bugTracker.tickets WHERE id = ${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            ticket: result
+        });
     });
 });
 
@@ -334,7 +338,9 @@ app.get('/api/comments', (req,res) => {
     const sql = 'SELECT * FROM bugTracker.comments';
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            comments: result
+        });
     });
 });
 
@@ -344,7 +350,9 @@ app.get('/api/comments/:id', (req,res) => {
     const sql = `SELECT * FROM bugTracker.comments WHERE id = ${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            comment: result
+        });
     });
 });
 
@@ -442,7 +450,9 @@ app.get('/api/projects', (req,res) => {
     const sql = 'SELECT * FROM bugTracker.projects';
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            projects: result
+        });
     });
 });
 
@@ -452,7 +462,9 @@ app.get('/api/projects/:id', (req,res) => {
     const sql = `SELECT * FROM bugTracker.projects WHERE id = ${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send(result);
+        res.json({
+            project: result
+        });
     });
 });
 
