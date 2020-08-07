@@ -3,8 +3,11 @@ import React from 'react';
 // Pages
 import DashBoard from './pages/dashboard/dashboard.component';
 
-//css
+// css
 import './App.css';
+
+// components
+import MenuBar from './components/menu_bar/menu_bar.component';
 
 class App extends React.Component {
   
@@ -45,13 +48,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        
-        <DashBoard 
-          users = {this.state.users}
-          comments = {this.state.comments}
-          projects = {this.state.projects}
-          tickets = {this.state.tickets}
-        />
+        <MenuBar />
+        <DashBoard />
        
       </div>
     );

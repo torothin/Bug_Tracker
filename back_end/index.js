@@ -137,7 +137,10 @@ app.post('/api/tickets', (req,res) => {
         title: req.query.title,
         body: req.query.body,
         est_complete_date: req.query.est_complete_date,
-        act_complete_date: req.query.act_complete_date
+        act_complete_date: req.query.act_complete_date,
+        priority: req.query.priority,
+        category: req.query.category,
+        type: req.query.type,
     }
 
     if(newTicket.est_complete_date === undefined) newTicket.est_complete_date = `NULL`;
@@ -148,7 +151,10 @@ app.post('/api/tickets', (req,res) => {
         newTicket.assigned_id === undefined ||
         newTicket.author_id === undefined ||
         newTicket.title === undefined ||
-        newTicket.body === undefined
+        newTicket.body === undefined ||
+        newTicket.priority === undefined ||
+        newTicket.category === undefined ||
+        newTicket.type === undefined
         ) throw Error;
         
     
@@ -170,6 +176,9 @@ app.put('/api/tickets/:id', (req,res) => {
     let body = req.query.body;
     let est_complete_date = req.query.est_complete_date;
     let act_complete_date = req.query.act_complete_date;
+    let priority = req.query.priority;
+    let category = req.query.category;
+    let type = req.query.type;
 
     const getAllQuery = `SELECT * FROM bugTracker.tickets WHERE id = ${id}`;
     const query = db.query(getAllQuery, (err,result) => {
@@ -182,6 +191,9 @@ app.put('/api/tickets/:id', (req,res) => {
         body = body == undefined ? result[0].body : body;
         est_complete_date = est_complete_date == undefined ? result[0].est_complete_date : est_complete_date;
         act_complete_date = act_complete_date == undefined ? result[0].act_complete_date : act_complete_date;
+        priority = priority == undefined ? result[0].priority : priority;
+        category = category == undefined ? result[0].category : category;
+        type = type == undefined ? result[0].type : type;
 
         const updateTicket = `UPDATE bugTracker.tickets SET 
             project_id=${project_id},
@@ -190,7 +202,10 @@ app.put('/api/tickets/:id', (req,res) => {
             title='${title}',
             body='${body}',
             est_complete_date=${est_complete_date},
-            act_complete_date=${act_complete_date}
+            act_complete_date=${act_complete_date},
+            priority=${priority},
+            category=${category},
+            type=${type},
             WHERE id=${id}`;
 
             console.log(updateTicket);
@@ -237,6 +252,51 @@ app.get('/api/tickets/:id', (req,res) => {
         if(err) throw err;
         res.json({
             ticket: result
+        });
+    });
+});
+
+// get all tickets by order of priority for dashboard
+app.get('/api/dashboard/priority', (req,res) => {
+    const sql = 'SELECT * FROM bugTracker.tickets ORDER BY priority ASC';
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            priority: result
+        });
+    });
+});
+
+// get all tickets by order of category for dashboard
+app.get('/api/dashboard/category', (req,res) => {
+    const sql = `SELECT * FROM tickets ORDER BY category ASC`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            category: result
+        });
+    });
+});
+
+// get all tickets by order of type for dashboard
+app.get('/api/dashboard/type', (req,res) => {
+    const sql = `SELECT * FROM tickets ORDER BY type ASC`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            type: result
+        });
+    });
+});
+
+// get all tickets belonging to id
+app.get('/api/dashboard/user/:id', (req,res) => {
+    const sql = `SELECT * FROM tickets WHERE assigned_id = ${req.params.id}`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        console.log(result)
+        res.json({
+            type: result
         });
     });
 });
