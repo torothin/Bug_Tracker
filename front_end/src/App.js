@@ -4,10 +4,11 @@ import React from 'react';
 import DashBoard from './pages/dashboard/dashboard.component';
 
 // css
-import './App.css';
+import './App.scss';
 
 // components
 import MenuBar from './components/menu_bar/menu_bar.component';
+import SignUpBar from './components/signup_bar/signup_bar.component';
 
 class App extends React.Component {
   
@@ -48,6 +49,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <SignUpBar />
         <MenuBar />
         <DashBoard />
        
