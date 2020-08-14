@@ -11,14 +11,16 @@ import MenuBar from './components/menu_bar/menu_bar.component';
 import SignUpBar from './components/signup_bar/signup_bar.component';
 
 class App extends React.Component {
-  
-  state = {
-    users: [],
-    projects: [],
-    tickets: [],
-    comments: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: [],
+      projects: [],
+      tickets: [],
+      comments: [],
+      user_id: 3,
+    }
   }
-  
   
   componentDidMount() {
     fetch('http://localhost:4000/api/users')
@@ -49,10 +51,16 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <SignUpBar />
+        <SignUpBar 
+          projects={this.state.projects}
+          users={this.state.users}
+          user={this.state.user_id}
+
+        />
         <MenuBar />
-        <DashBoard />
-       
+        <div className='content'>
+          <DashBoard user={this.state.user_id}/>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Jumbotron } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import  Chart from 'chart.js';
 import { Pie } from'react-chartjs-2';
 import './dashboard_box.styles.scss';
@@ -9,16 +9,15 @@ class DashBoardBox extends React.Component {
     constructor(props) {
         super(props);
         this.chartReference = React.createRef();
-    }
+    
 
-    state = {
-        data: {
-            labels: [],
-            datasets: [{
-                data: [],
-                label: ""
-            }]
-            
+        this.state = {
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    label: ""
+                }]}
         }
     }
 
@@ -34,21 +33,23 @@ class DashBoardBox extends React.Component {
     render() {
         return (
             <div className="box">
+                <Card bg={ "light" }>
+                    <Card.Body>
                 
-                
-                <Jumbotron>
-                    <h4>{this.props.title}</h4>
-                    
-                    { this.props.chartData.labels &&
-                       <Pie 
+                    <Card.Title>{this.props.title}</Card.Title>
+                    <Card.Text>
+                        { this.props.chartData.labels &&
+                        <Pie 
                             data={this.props.chartData} 
                             ref={this.chartReference} 
-                            width={300} 
-                            height={300} 
+                            width={100} 
+                            height={200} 
+                            options={{ maintainAspectRatio: false }}
                         />
-                    }
-                    
-                    </Jumbotron>
+                        }
+                    </Card.Text>
+                    </Card.Body>
+                </Card>
             </div>
         )
     }
