@@ -15,11 +15,12 @@ class DashBoard extends React.Component {
             categoryData: {},
             typeData: {},
             userData: {},
+            user_id: this.props.user_id,
         }
     }
 
     componentDidMount() {
-        fetch('http://localhost:4000/api/dashboard/priority')
+        fetch(`http://localhost:4000/api/dashboard/priority`)
             .then(res => res.json())
             .then( (priority) => {
                 const configedData = this.configData("priority",Object.values(priority)[0]);
@@ -43,20 +44,19 @@ class DashBoard extends React.Component {
             }
         );
 
-        fetch(`http://localhost:4000/api/dashboard/user/${this.props.user}`)
+        fetch(`http://localhost:4000/api/dashboard/user/${this.props.user_id}`)
             .then(res => res.json())
             .then( (user) => {
                 const configedData = this.configData("user",Object.values(user)[0]);
                 this.setState({"user": Object.values(user)[0],userData: configedData});
-            }
-        );
+            }); 
     }
 
     configData(type, inputData) {
         const dataMap = {};
         const labels = [];
         const dataArray = [];
-        const inputType = type === 'user' ? "type" : type;
+        const inputType = type === 'user' ? 'type' : type;
 
         // takes the JSON data and creates a map of the ticket type (key) 
         // to the number of tickets (value)
@@ -111,6 +111,7 @@ class DashBoard extends React.Component {
     render() {
         return (
             <div className="dashboard-container">
+                
                 <Container fluid="md"> 
                     <Row xs={1} md={2}>
                         <Col className='padded-col'>

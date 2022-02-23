@@ -1,4 +1,6 @@
 import React from 'react';
+import { Router } from 'react-router-dom';
+import history from './helpers/history';
 
 // Pages
 import DashBoard from './pages/dashboard/dashboard.component';
@@ -18,16 +20,17 @@ class App extends React.Component {
       projects: [],
       tickets: [],
       comments: [],
-      user_id: 3,
+      user_id: 1,
     }
   }
+
   
   componentDidMount() {
     fetch('http://localhost:4000/api/users')
       .then(res => res.json())
       .then( (users) => {
         this.setState({...this.state, users: Object.values(users)[0]});
-      });
+    });
 
       fetch('http://localhost:4000/api/tickets')
         .then(res => res.json())
@@ -50,18 +53,21 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <SignUpBar 
-          projects={this.state.projects}
-          users={this.state.users}
-          user={this.state.user_id}
+      <Router history={history}>
+        <div className="App">
+          <SignUpBar 
+            projects={this.state.projects}
+            users={this.state.users}
+            user_id={this.state.user_id}
 
-        />
-        <MenuBar />
-        <div className='content'>
-          <DashBoard user={this.state.user_id}/>
+          />
+          <MenuBar
+            user_id={this.state.user_id}
+            tickets_data={this.state.tickets}
+          />
+
         </div>
-      </div>
+      </Router>
     );
   }
 }

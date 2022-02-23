@@ -1,18 +1,25 @@
 import React from 'react';
 import { Navbar,Nav,NavDropdown,Button } from 'react-bootstrap';
 import AddTicket from '../add_ticket/add_ticket.component';
-import MyModal from '../my_model/my_modal.component';
+import AddModal from '../add_modal/add_modal.component';
 
 class SignUpBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             showModal: false,
+            addType: ""
         }
     }
 
     toggleModal = () => {
-        this.setState({...this.state, showModal: !this.state.showModal});
+        this.setState({...this.state, showModal: !this.state.showModal, addType: ''});
+    }
+    toggleModalTicket = () => {
+        this.setState({...this.state, showModal: !this.state.showModal, addType: 'Ticket'});
+    }
+    toggleModalProject = () => {
+        this.setState({...this.state, showModal: !this.state.showModal, addType: 'Project'});
     }
 
     render() {
@@ -31,16 +38,25 @@ class SignUpBar extends React.Component {
                         <NavDropdown.Divider />
                         <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
                     </NavDropdown>
-                    <Button variant="primary" onClick={this.toggleModal}>Add Ticket</Button>
+                    <Button 
+                        variant="primary" 
+                        onClick={this.toggleModalTicket}
+                        >Add Ticket</Button>
+                    <Button 
+                        variant="primary" 
+                        onClick={this.toggleModalProject}
+                        >Add Project</Button>
                     </Nav>
                 </Navbar.Collapse>
-                <MyModal 
+                <AddModal 
                     projects={this.props.projects} 
                     users={this.props.users}
                     show={ this.state.showModal } 
                     toggle={this.toggleModal}
                     user={this.props.user}
+                    addType={this.state.addType}
                 />
+                <h1>User: {this.props.user_id}</h1>
             </Navbar>
         )
     }

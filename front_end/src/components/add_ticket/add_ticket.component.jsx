@@ -8,16 +8,15 @@ class AddTicket extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "title": "",
-            "body": "",
+            "title": "test",
+            "body": "test",
             "priority": 0,
             "category": 0,
             "type": 0,
-            "project_id": this.props.projects[0].id,
-            "assigned_id": this.props.users[0].id,
+            "project_id": 1,//this.props.projects[0].id,
+            "assigned_id": 1, //this.props.users[0].id,
             "author_id": this.props.user,
             "est_complete_date": null,
-            
         }
     }
 
@@ -38,11 +37,13 @@ class AddTicket extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         this.creatSQLQuery();
+        console.log("handlesubmit");
     }
 
     updateDate = (event) => {
-        console.log(event)
-        this.setState({...this.state, "est_complete_date": event})
+        console.log("updateDate:");
+        console.log(event);
+        this.setState({...this.state, "est_complete_date": event});
     }
 
     /*
@@ -60,22 +61,23 @@ class AddTicket extends React.Component {
     */
     creatSQLQuery() {
         
-        const sql = `http://localhost:4000/api/tickets/?
-                    title=${this.state["title"]}&
-                    body=${this.state["body"]}&
-                    priority=${this.state["priority"]}&
-                    category=${this.state["category"]}&
-                    type=${this.state["type"]}&
-                    project_id=${this.state["project_id"]}&
-                    assigned_id=${this.state["assigned_id"]}&
-                    author_id=${this.state["author_id"]}&
-                    est_complete_date=${this.state["est_complete_date"]}
-                    `;
-        console.log(sql);
+        var sql = `http://localhost:4000/api/tickets/?title=${this.state["title"]}&
+        body=${this.state["body"]}&
+        priority=${this.state["priority"]}&
+        category=${this.state["category"]}&
+        type=${this.state["type"]}&
+        project_id=${this.state["project_id"]}&
+        assigned_id=${this.state["assigned_id"]}&
+        author_id=${this.state["author_id"]}&
+        est_complete_date=${this.state["est_complete_date"]}`;
+        
+        console.log("sql:", sql, this.props.history);
+        //this.props.history.push(sql);
+        
     }
 
     render() {
-        console.log(this.props.users);
+        console.log("this.props.users:", this.props.users);
         return (
             <div>
                 <Form onSubmit={this.handleSubmit}>
@@ -153,10 +155,10 @@ class AddTicket extends React.Component {
                             }
                         </Form.Control>
                     </Form.Group>
-                    <p className="date-picker-p">Estimated Complete Data</p>
+                    <p className="date-picker-p">Estimated Complete Date</p>
                     <DatePicker
                         className="date-picker"
-                        selected={this.state.["est_complete_date"]}
+                        selected={this.state.est_complete_date}
                         value={this.state.est_complete_date}
                         onChange={this.updateDate}
                     />
@@ -176,6 +178,7 @@ class AddTicket extends React.Component {
                     </InputGroup>
                     <Button type="submit">Submit form</Button>
                     
+
                 </Form>
                 
             </div>

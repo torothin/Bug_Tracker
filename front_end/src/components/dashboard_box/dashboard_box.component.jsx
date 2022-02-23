@@ -24,9 +24,11 @@ class DashBoardBox extends React.Component {
     componentDidMount() {
         // console.log(this.chartReference); // returns a Chart.js instance reference
         //this.sortData();
+        //console.log(this.state);
     }
     componentDidUpdate() {
-        //this.setState({data: this.props.chartData})
+        //this.setState({data: this.props.chartData});
+        //console.log(this.state);
     }
     
 

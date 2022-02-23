@@ -1,6 +1,9 @@
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const cors = require('cors');
+const { Router } = require('express');
+
+
 
 // create connection
 const db = mysql.createConnection({
@@ -18,6 +21,7 @@ db.connect((err) => {
 })
 
 const app = express();
+const router = express.Router();
 
 app.use(cors());
 
@@ -32,26 +36,69 @@ app.get('/', (req,res) => {
 /* ------ user Create, Read, Update, Delete /api/users ------ 
 
 user details:
-first_name
-last_name
-ID
+
+CREATE TABLE bugTracker.users (
+
+id INT AUTO_INCREMENT, 
+first_name VARCHAR(255), 
+last_name VARCHAR(255), 
+
+PRIMARY KEY ( id )
+
+);
 
 */
 
-// create new user
+// trying this code
 
-app.post('/api/users', (req,res) => {
+//app.route('')
+
+// create new user
+// http://localhost:4000/api/users/?first_name=Test_First&last_name=Test_Last
+
+
+
+app.post('/api/users/', (req,res) => {
     const first_name = req.query.first_name;
     const last_name = req.query.last_name;
 
+    //console.log(first_name,last_name);
+    
     if(first_name === undefined || last_name === undefined) throw Error;
 
+
     const sql = `INSERT INTO bugTracker.users (first_name, last_name) VALUES ('${first_name}', '${last_name}')`;
+
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        res.send("updated?");
+        res.send(result);
     });
 });
+
+// get users data
+app.get('/api/users/', (req,res) => {
+    const sql = 'SELECT * FROM bugTracker.users';
+    //console.log(sql);
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            users: result
+        });
+    });
+});
+
+// get a specific users data
+app.get('/api/users/:id', (req,res) => {
+    const sql = `SELECT * FROM bugTracker.users WHERE id = ${req.params.id}`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            user: result
+        });
+    });
+});
+
+
 
 // update current user
 
@@ -81,49 +128,37 @@ app.put('/api/users/:id', (req,res) => {
 
 // delete user
 app.delete('/api/users/:id', (req,res) => {
-    console.log('delete called');
+    //console.log('delete called');
     const sql = `DELETE FROM bugTracker.users WHERE id=${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        console.log(result);
+        //console.log(result);
         res.send("Deleted?");
-    });
-});
-
-// get users data
-app.get('/api/users', (req,res) => {
-    const sql = 'SELECT * FROM bugTracker.users';
-    const query = db.query(sql, (err,result) => {
-        if(err) throw err;
-        res.json({
-            users: result
-        });
-    });
-});
-
-// get a specific users data
-app.get('/api/users/:id', (req,res) => {
-    const sql = `SELECT * FROM bugTracker.users WHERE id = ${req.params.id}`;
-    const query = db.query(sql, (err,result) => {
-        if(err) throw err;
-        res.json({
-            user: result
-        });
     });
 });
 
 /* ------ tickets Create, Read, Update, Delete /api/tickets ------ 
 
 ticket info:
-id
-project_id
-assigned_id
-creator_id
-creation_date
-est_complete_date
-act_complete_date
-title
-body
+
+CREATE TABLE bugTracker.tickets (
+
+id INT AUTO_INCREMENT, 
+project_id INT,
+assigned_id INT,
+creator_id INT,
+creation_date DATETIME,
+est_complete_date DATETIME,
+act_complete_date DATETIME,
+title VARCHAR(255), 
+body TEXT,
+priority INT,
+category INT,
+type INT
+
+PRIMARY KEY ( id )
+
+);
 
 */
 
@@ -208,7 +243,7 @@ app.put('/api/tickets/:id', (req,res) => {
             type=${type},
             WHERE id=${id}`;
 
-            console.log(updateTicket);
+            //console.log(updateTicket);
     
         const query = db.query(updateTicket, (err,result) => {
             if(err) throw err;
@@ -256,6 +291,8 @@ app.get('/api/tickets/:id', (req,res) => {
     });
 });
 
+/*
+
 // get all tickets by order of priority for dashboard
 app.get('/api/dashboard/priority', (req,res) => {
     const sql = 'SELECT * FROM bugTracker.tickets ORDER BY priority ASC';
@@ -269,7 +306,7 @@ app.get('/api/dashboard/priority', (req,res) => {
 
 // get all tickets by order of category for dashboard
 app.get('/api/dashboard/category', (req,res) => {
-    const sql = `SELECT * FROM tickets ORDER BY category ASC`;
+    const sql = `SELECT * FROM bugTracker.tickets ORDER BY category ASC`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
         res.json({
@@ -280,7 +317,7 @@ app.get('/api/dashboard/category', (req,res) => {
 
 // get all tickets by order of type for dashboard
 app.get('/api/dashboard/type', (req,res) => {
-    const sql = `SELECT * FROM tickets ORDER BY type ASC`;
+    const sql = `SELECT * FROM bugTracker.tickets ORDER BY type ASC`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
         res.json({
@@ -290,27 +327,35 @@ app.get('/api/dashboard/type', (req,res) => {
 });
 
 // get all tickets belonging to id
-app.get('/api/dashboard/user/:id', (req,res) => {
-    const sql = `SELECT * FROM tickets WHERE assigned_id = ${req.params.id}`;
+app.get('/api/dashboard/user/id', (req,res) => {
+    const sql = `SELECT * FROM bugTracker.tickets WHERE assigned_id = ${req.params.id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
-        console.log(result)
         res.json({
-            type: result
+            user_tickets: result
         });
     });
 });
 
+*/
+
 /* ------ comments Create, Read, Update, Delete /api/comments ------ 
 
 comment info:
+
+CREATE TABLE bugTracker.comments (
+
 id INT AUTO_INCREMENT, 
 project_id INT,
 ticket_id INT,
 author_id INT,
 creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 title VARCHAR(255), 
-body VARCHAR(255), 
+body TEXT, 
+
+PRIMARY KEY ( id )
+
+);
 
 */
 
@@ -420,12 +465,19 @@ app.get('/api/comments/:id', (req,res) => {
 /* ------ projects Create, Read, Update, Delete /api/projects ------ 
 
 project info:
+
+CREATE TABLE bugTracker.projects (
+
 id INT AUTO_INCREMENT, 
 author_id INT,
 owner_id INT,
-creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+creation_date DATETIME,
 title VARCHAR(255), 
 body TEXT, 
+
+PRIMARY KEY ( id )
+
+);
 
 */
 
@@ -446,12 +498,14 @@ app.post('/api/projects', (req,res) => {
     ) throw Error;
 
     const add_project = `INSERT INTO bugTracker.projects SET ?`
-    
+    print(add_project,new_project)
     const query = db.query(add_project, new_project, (err,result) => {
         if(err) throw err;
+        //console.log(result,add_project,new_project);
+        res.send("projects");
     });
 
-    res.send("projects");
+    
 
 });
 
@@ -528,3 +582,57 @@ app.get('/api/projects/:id', (req,res) => {
     });
 });
 
+
+
+//http://localhost:3000/api/dashboard/priority
+
+app.get('/api/dashboard/priority', (req,res) => {
+    const sql = `SELECT * FROM bugTracker.tickets ORDER BY priority`; //WHERE assigned_id = ${req.params.id} 
+    const query = db.query(sql, (err,result) => {
+        console.log(result);
+        if(err) throw err;
+        res.json({
+            tickets: result
+        });
+    });
+});
+
+//http://localhost:3000/api/dashboard/type
+
+app.get('/api/dashboard/type', (req,res) => {
+    const sql = `SELECT * FROM bugTracker.tickets ORDER BY type`; //WHERE assigned_id = ${req.params.id} 
+    const query = db.query(sql, (err,result) => {
+        console.log(result);
+        if(err) throw err;
+        res.json({
+            tickets: result
+        });
+    });
+});
+
+//http://localhost:3000/api/dashboard/category
+
+app.get('/api/dashboard/category', (req,res) => {
+    const sql = `SELECT * FROM bugTracker.tickets ORDER BY category`; //WHERE assigned_id = ${req.params.id} 
+    const query = db.query(sql, (err,result) => {
+        console.log(result);
+        if(err) throw err;
+        res.json({
+            tickets: result
+        });
+    });
+});
+
+//http://localhost:3000/api/dashboard/user/:id
+
+app.get('/api/dashboard/user/:id', (req,res) => {
+    const id = req.params.id;
+    //const id = 1;
+    const sql = `SELECT * FROM bugTracker.tickets WHERE assigned_id = ${id}`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            tickets: result 
+        }); 
+    }); 
+});
