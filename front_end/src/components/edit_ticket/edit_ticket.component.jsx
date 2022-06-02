@@ -1,46 +1,83 @@
 import React from 'react';
 import { InputGroup, FormControl, Form, Button, Col, Row } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
-import './add_ticket.styles.scss';
+import './edit_ticket.styles.scss';
 import "react-datepicker/dist/react-datepicker.css";
 import { default_location } from '../../helpers/default_location';
 import { dateToString } from '../../helpers/date_handler';
 
-class AddTicket extends React.Component {
+class EditTicket extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "title": "",
-            "body": "",
-            "priority": 1,
-            "category": 1,
-            "type": 1,
-            "project_id": 1,//this.props.projects[0].id,
-            "assigned_id": 1, //this.props.users[0].id,
-            "creator_id": 1,
-            "est_complete_date": new Date(),
+            title: "",
+            body: "",
+            priority: 0,
+            category: 0,
+            type: 0,
+            project_id: 0,//this.props.projects[0].id,
+            assigned_id: 0, //this.props.users[0].id,
+            creator_id: 0,
+            est_complete_date: new Date(),
             users: [],
             projects:[],
             loaded: false,
         }
     }
     async componentWillMount() {
+        console.log("edit ticket componentWillMount")
         let projectLoad = fetch(`${default_location}/api/projects`)
             .then(res => res.json())
             .then( (projects) => {
-                this.setState({...this.state, projects: Object.values(projects)[0]}); 
+                console.log("projects",Object.values(projects)[0])
+                return Object.values(projects)[0];
         });
 
         let userLoad = fetch(`${default_location}/api/users`)
             .then(res => res.json())
             .then( (users) => {
-                this.setState({...this.state, users: Object.values(users)[0]}); 
+                console.log("users",Object.values(users)[0])
+                return Object.values(users)[0];
+        });
+        
+        let ticketsLoad = fetch(`${default_location}/api/tickets/${this.props.editId}`)
+            .then(res => res.json())
+            .then( (tickets) => {
+                const ticketsArray = Object.values(tickets)[0];
+                const ticket = ticketsArray[0];
+                ticket.est_complete_date = new Date(ticket.est_complete_date);
+                console.log("ticket",ticket)
+                return ticket;
         });
 
-        await Promise.all([projectLoad, userLoad]);
-        this.setState({loaded: !this.state.loaded});
+        await Promise.all([projectLoad, userLoad, ticketsLoad])
+        .then(([projects, users, ticket])=>{
+            console.log("update after promise")
+            this.setState({
+                ...this.state,
+                loaded: !this.state.loaded,
+                projects: projects,
+                users: users,
+                title: ticket.title,
+                body: ticket.body,
+                priority: ticket.priority,
+                category: ticket.category,
+                type: ticket.type,
+                project_id: ticket.project_id,
+                assigned_id: ticket.assigned_id,
+                creator_id: ticket.creator_id,
+                est_complete_date: ticket.est_complete_date,
+            },()=>{console.log("this.state",this.state)});
+        });
+        
+    }
+    componentDidMount() {
+        console.log("edit ticket componentDidMount")
     }
     
+    componentDidUpdate() {
+        console.log("edit ticket componentDidUpdate");
+    }
 
     myChangeHandler = (event) => {
         event.persist()
@@ -51,19 +88,23 @@ class AddTicket extends React.Component {
             event.target.id === "priority" ||
             event.target.id === "type"
             ) ? parseInt(event.target.value) : event.target.value;
-        console.log(eventTargetValue);
         this.setState({[event.target.id]: eventTargetValue});
     }
 
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
         event.preventDefault();
-        this.creatSQLQuery();
-        this.props.toggleModal('');
+        const test = this.creatSQLQuery();
+        console.log("test",test);
+        await test.then(()=>{
+            console.log("after promise")
+            this.props.toggleModal('')
+        });
+        
     }
 
     updateDate = (event) => {
         
-        this.setState({...this.state, "est_complete_date": event});
+        this.setState({...this.state, est_complete_date: event});
     }
 
     /*
@@ -79,7 +120,7 @@ class AddTicket extends React.Component {
         category: req.query.category,
         type: req.query.type,
     */
-    creatSQLQuery() {
+    async creatSQLQuery() {
         
         // var sql = `${default_location}/api/tickets/?title=${this.state["title"]}&
         // body=${this.state["body"]}&
@@ -91,7 +132,8 @@ class AddTicket extends React.Component {
         // author_id=${this.state["author_id"]}&
         // est_complete_date=${dateToString(this.state["est_complete_date"])}`;
 
-        var sql = default_location + "/api/tickets/?title=" +
+        var sql = default_location + "/api/tickets/" + 
+            this.props.editId + "/?title=" +
             this.state["title"] + "&body=" +
             this.state["body"] + "&priority=" +
             this.state["priority"] + "&category=" +
@@ -106,15 +148,35 @@ class AddTicket extends React.Component {
         
         console.log(sql)
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST',sql);
-        xhr.send();
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('PUT',sql);
+        // xhr.send();
+        
+        const ticketUpdate = fetch(sql,{
+            method: 'PUT'
+        })
+            .then(res => {
+                res.json()
+                console.log(res)
+            })
+           
+        
+        console.log("ticketUpdate",ticketUpdate)
+        
+        await Promise.all([ticketUpdate])
+        .then(()=>{
+            return Promise;
+        });
+            
         
     }
 
     render() {
         return (
             <div>
+                {
+                    this.state.refresh
+                }
                 <Form onSubmit={this.handleSubmit} hidden={!this.state.loaded}>
                     <InputGroup size="sm">
                         <InputGroup.Prepend>
@@ -125,6 +187,7 @@ class AddTicket extends React.Component {
                             onChange={this.myChangeHandler}
                             aria-label="Default"
                             aria-describedby="inputGroup-sizing-default"
+                            value={this.state.title}
                         />
                     </InputGroup>
                     <br/>
@@ -134,6 +197,7 @@ class AddTicket extends React.Component {
                             size="sm"
                             as="select"
                             id="project_id"
+                            value={this.state.project_id}
                             onChange={this.myChangeHandler}>
                                 {
                                     
@@ -150,7 +214,9 @@ class AddTicket extends React.Component {
                             size="sm"
                             as="select"
                             id="type"
+                            value={this.state.type}
                             onChange={this.myChangeHandler}>
+                            
                             <option>1</option>
                             <option>2</option>
                         </Form.Control>
@@ -161,6 +227,7 @@ class AddTicket extends React.Component {
                             size="sm"
                             as="select"
                             id="category"
+                            value={this.state.category}
                             onChange={this.myChangeHandler}>
                             <option>1</option>
                             <option>2</option>
@@ -172,6 +239,7 @@ class AddTicket extends React.Component {
                             size="sm"
                             as="select"
                             id="priority"
+                            value={this.state.priority}
                             onChange={this.myChangeHandler}>
                             <option>1</option>
                             <option>2</option>
@@ -184,6 +252,7 @@ class AddTicket extends React.Component {
                             size="sm"
                             as="select"
                             id="assigned_id"
+                            value={this.state.assigned_id}
                             onChange={this.myChangeHandler}>
                             {
                                 this.state.users.map(item => {
@@ -211,6 +280,7 @@ class AddTicket extends React.Component {
                             onChange={this.myChangeHandler}
                             as="textarea" 
                             aria-label="With textarea"
+                            value={this.state.body}
                         />
                     </InputGroup>
                     <Button type="submit">Submit form</Button>
@@ -223,4 +293,4 @@ class AddTicket extends React.Component {
     }
 }
 
-export default AddTicket;
+export default EditTicket;

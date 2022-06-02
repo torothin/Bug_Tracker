@@ -1,7 +1,7 @@
 import React from 'react';
 import { InputGroup, FormControl, Form, Button, Col, Row } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
-import './add_project.styles.scss';
+import './edit_project.styles.scss';
 import "react-datepicker/dist/react-datepicker.css";
 import { default_location } from '../../helpers/default_location';
 import { dateToString } from '../../helpers/date_handler';
@@ -17,7 +17,7 @@ body TEXT,
 
 */
 
-class AddProject extends React.Component {
+class EditProject extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -27,19 +27,38 @@ class AddProject extends React.Component {
             "author_id": props.user,
             "creation_date": new Date(),
             users: [],
-            loaded: false
+            loaded: false,
+            projects: [],
         }
     }
 
     async componentWillMount() {
+        console.log("edit project willmounted");
         let userLoad = fetch(`${default_location}/api/users`)
             .then(res => res.json())
             .then( (users) => {
                 this.setState({...this.state, users: Object.values(users)[0]}); 
         });
 
-        await Promise.all([userLoad]);
-        this.setState({loaded: !this.state.loaded});
+        let projectLoad = fetch(`${default_location}/api/projects/${this.props.editId}`)
+            .then(res => res.json())
+            .then( (projects) => {
+                this.setState({...this.state, projects: Object.values(projects)[0]}); 
+        });
+
+        await Promise.all([userLoad,projectLoad]);
+        this.setState({...this.state,
+                loaded: !this.state.loaded, 
+                body: this.state.projects[0].body, 
+                title: this.state.projects[0].title},
+                ()=>{console.log("edit projects ",this.state)});
+    }
+
+    componentDidUpdate() {
+        console.log("edit project updated");
+    }
+    componentDidMount() {
+        console.log("edit project mounted");
     }
 
     myChangeHandler = (event) => {
@@ -54,7 +73,7 @@ class AddProject extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
         this.creatSQLQuery();
-        this.props.toggleModal('');
+        this.props.toggleModal('',0);
        
     }
 
@@ -64,25 +83,26 @@ class AddProject extends React.Component {
     }
 
     /*
-        post details
-        author_id INT,
-        owner_id INT,
-        creation_date DATETIME,
-        title VARCHAR(255), 
-        body TEXT, 
+        const updateProject = `UPDATE bugTracker.projects SET 
+            owner_id=${owner_id},
+            author_id='${author_id}',
+            title='${title}',
+            body='${body}',
+            creation_date=${creation_date}
+            WHERE id=${id}`;
     */
     creatSQLQuery() {
         
-        
-        var sql = default_location + "/api/projects/?title=" + 
+        var sql = default_location + "/api/projects/" +
+        this.props.editId + "/?title=" +
         this.state["title"] + "&body=" +
         this.state["body"] + "&owner_id=" + 
         this.state["owner_id"] + "&author_id=" +
         this.state["author_id"] + "&creation_date=" + 
         this.state["creation_date"];
-                
+        
         var xhr = new XMLHttpRequest();
-        xhr.open('POST',sql);
+        xhr.open('PUT',sql);
         xhr.send();
         
     }
@@ -100,6 +120,7 @@ class AddProject extends React.Component {
                             onChange={this.myChangeHandler}
                             aria-label="Default"
                             aria-describedby="inputGroup-sizing-default"
+                            value={this.state.title}
                         />
                     </InputGroup>
                     <br/>
@@ -138,6 +159,7 @@ class AddProject extends React.Component {
                             onChange={this.myChangeHandler}
                             as="textarea" 
                             aria-label="With textarea"
+                            value={this.state.body}
                         />
                     </InputGroup>
                     <br />
@@ -151,4 +173,4 @@ class AddProject extends React.Component {
     }
 }
 
-export default AddProject;
+export default EditProject;

@@ -15,12 +15,12 @@ class DashBoard extends React.Component {
             categoryData: {},
             typeData: {},
             userData: {},
-            user_id: this.props.user_id,
+            user: this.props.user,
         }
     }
 
     componentDidMount() {
-        fetch(`http://localhost:4000/api/dashboard/priority`)
+        fetch('http://localhost:4000/api/dashboard/priority')
             .then(res => res.json())
             .then( (priority) => {
                 const configedData = this.configData("priority",Object.values(priority)[0]);
@@ -44,7 +44,7 @@ class DashBoard extends React.Component {
             }
         );
 
-        fetch(`http://localhost:4000/api/dashboard/user/${this.props.user_id}`)
+        fetch(`http://localhost:4000/api/dashboard/tickets/${this.props.user}`)
             .then(res => res.json())
             .then( (user) => {
                 const configedData = this.configData("user",Object.values(user)[0]);

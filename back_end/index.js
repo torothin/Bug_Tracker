@@ -1,8 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-const { Router } = require('express');
-
 
 
 // create connection
@@ -21,7 +19,6 @@ db.connect((err) => {
 })
 
 const app = express();
-const router = express.Router();
 
 app.use(cors());
 
@@ -168,14 +165,15 @@ app.post('/api/tickets', (req,res) => {
     const newTicket = {
         project_id: req.query.project_id,
         assigned_id: req.query.assigned_id,
-        author_id: req.query.author_id,
+        creator_id: req.query.creator_id,
         title: req.query.title,
         body: req.query.body,
-        est_complete_date: req.query.est_complete_date,
-        act_complete_date: req.query.act_complete_date,
+        est_complete_date: new Date(req.query.est_complete_date),
+        act_complete_date: new Date(req.query.act_complete_date),
         priority: req.query.priority,
         category: req.query.category,
         type: req.query.type,
+        creation_date: new Date(req.query.creation_date),
     }
 
     if(newTicket.est_complete_date === undefined) newTicket.est_complete_date = `NULL`;
@@ -184,7 +182,7 @@ app.post('/api/tickets', (req,res) => {
     if(
         newTicket.project_id === undefined ||
         newTicket.assigned_id === undefined ||
-        newTicket.author_id === undefined ||
+        newTicket.creator_id === undefined ||
         newTicket.title === undefined ||
         newTicket.body === undefined ||
         newTicket.priority === undefined ||
@@ -206,7 +204,7 @@ app.put('/api/tickets/:id', (req,res) => {
     const id = req.params.id;
     let project_id = req.query.project_id;
     let assigned_id = req.query.assigned_id;
-    let author_id = req.query.author_id;
+    let creator_id = req.query.creator_id;
     let title = req.query.title;
     let body = req.query.body;
     let est_complete_date = req.query.est_complete_date;
@@ -221,7 +219,7 @@ app.put('/api/tickets/:id', (req,res) => {
         
         project_id = project_id == undefined ? result[0].project_id : project_id;
         assigned_id = assigned_id == undefined ? result[0].assigned_id : assigned_id;
-        author_id = author_id == undefined ? result[0].author_id : author_id;
+        creator_id = creator_id == undefined ? result[0].creator_id : creator_id;
         title = title == undefined ? result[0].title : title;
         body = body == undefined ? result[0].body : body;
         est_complete_date = est_complete_date == undefined ? result[0].est_complete_date : est_complete_date;
@@ -230,22 +228,33 @@ app.put('/api/tickets/:id', (req,res) => {
         category = category == undefined ? result[0].category : category;
         type = type == undefined ? result[0].type : type;
 
-        const updateTicket = `UPDATE bugTracker.tickets SET 
-            project_id=${project_id},
-            assigned_id='${assigned_id}',
-            author_id='${author_id}',
-            title='${title}',
-            body='${body}',
-            est_complete_date=${est_complete_date},
-            act_complete_date=${act_complete_date},
-            priority=${priority},
-            category=${category},
-            type=${type},
-            WHERE id=${id}`;
+        const updateTicket = `UPDATE bugTracker.tickets SET ? WHERE id=${id}`
+            // project_id=${project_id},
+            // assigned_id='${assigned_id}',
+            // creator_id='${creator_id}',
+            // title='${title}',
+            // body='${body}',
+            // est_complete_date=${est_complete_date},
+            // act_complete_date=${act_complete_date},
+            // priority=${priority},
+            // category=${category},
+            // type=${type},
+            // WHERE id=${id}`;
 
-            //console.log(updateTicket);
+            const newData = {
+                project_id: project_id,
+                assigned_id: assigned_id,
+                creator_id: creator_id,
+                title: title,
+                body: body,
+                est_complete_date: new Date(est_complete_date),
+                act_complete_date: new Date(act_complete_date),
+                priority: priority,
+                category: category,
+                type: type,
+            }
     
-        const query = db.query(updateTicket, (err,result) => {
+        const query = db.query(updateTicket, newData, (err,result) => {
             if(err) throw err;
             res.send("updated?");
             
@@ -483,11 +492,13 @@ PRIMARY KEY ( id )
 
 // create new project
 app.post('/api/projects', (req,res) => {
+    console.log("Project Post Called");
     const new_project = {
         author_id: req.query.author_id,
         owner_id: req.query.owner_id,
         title: `${req.query.title}`,
-        body: `${req.query.body}`
+        body: `${req.query.body}`,
+        creation_date: new Date(req.query.creation_date)
     };
 
     if(
@@ -498,10 +509,9 @@ app.post('/api/projects', (req,res) => {
     ) throw Error;
 
     const add_project = `INSERT INTO bugTracker.projects SET ?`
-    print(add_project,new_project)
+    console.log(add_project,new_project)
     const query = db.query(add_project, new_project, (err,result) => {
         if(err) throw err;
-        //console.log(result,add_project,new_project);
         res.send("projects");
     });
 
@@ -517,7 +527,7 @@ app.put('/api/projects/:id', (req,res) => {
     let author_id = req.query.author_id;
     let title = req.query.title;
     let body = req.query.body;
-    let creation_date = req.query.creation_date;
+    let creation_date = new Date(req.query.creation_date);
 
     const getAllQuery = `SELECT * FROM bugTracker.projects WHERE id = ${id}`;
     const queryProjects = db.query(getAllQuery, (err,result) => {
@@ -529,15 +539,17 @@ app.put('/api/projects/:id', (req,res) => {
         body = body == undefined ? result[0].body : body;
         creation_date = creation_date == undefined ? result[0].creation_date : creation_date;
         
-        const updateProject = `UPDATE bugTracker.projects SET 
-            owner_id=${owner_id},
-            author_id='${author_id}',
-            title='${title}',
-            body='${body}',
-            creation_date=${creation_date}
-            WHERE id=${id}`;
+        const updateProject = `UPDATE bugTracker.projects SET ? WHERE id=${id}` 
+
+        const newData = {
+            author_id: author_id,
+            owner_id: owner_id,
+            title: title,
+            body: body,
+            //creation_date: new Date(req.query.creation_date)
+        };
     
-        const updateQuery = db.query(updateProject, (err,result) => {
+        const updateQuery = db.query(updateProject, newData, (err,result) => {
             if(err) throw err;
             res.send("updated?");
             
@@ -623,16 +635,28 @@ app.get('/api/dashboard/category', (req,res) => {
     });
 });
 
-//http://localhost:3000/api/dashboard/user/:id
+//http://localhost:3000/api/dashboard/tickets/:assigned_id
 
-app.get('/api/dashboard/user/:id', (req,res) => {
-    const id = req.params.id;
-    //const id = 1;
-    const sql = `SELECT * FROM bugTracker.tickets WHERE assigned_id = ${id}`;
+app.get('/api/dashboard/tickets/:assigned_id', (req,res) => {
+    const assigned_id = req.params.assigned_id;
+    const sql = `SELECT * FROM bugTracker.tickets WHERE assigned_id = ${assigned_id}`;
     const query = db.query(sql, (err,result) => {
         if(err) throw err;
         res.json({
             tickets: result 
+        }); 
+    }); 
+});
+
+//http://localhost:3000/api/dashboard/projects/:owner_id
+
+app.get('/api/dashboard/projects/:owner_id', (req,res) => {
+    const owner_id = req.params.owner_id;
+    const sql = `SELECT * FROM bugTracker.projects WHERE owner_id = ${owner_id}`;
+    const query = db.query(sql, (err,result) => {
+        if(err) throw err;
+        res.json({
+            projects: result 
         }); 
     }); 
 });
