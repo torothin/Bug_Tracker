@@ -15,18 +15,6 @@ class TicketsPage extends React.Component {
         }
     }
 
-    // async componentWillMount() {
-    //     console.log("TicketsPage componentWillMount", this.state.tickets, this.props.tickets)
-    //     let ticketLoad = fetch(`${default_location}/api/dashboard/tickets/${this.props.user}`)
-    //         .then(res => res.json())
-    //         .then( (tickets) => {
-    //             this.setState({...this.state, tickets: Object.values(tickets)[0]}); 
-    //     });
-            
-    //     await Promise.all([ticketLoad]);
-    //     this.setState({loaded: true});
-    // }
-
     componentDidMount(){
         console.log("TicketsPage componentDidMount", this.state.tickets, this.props.tickets)
     }

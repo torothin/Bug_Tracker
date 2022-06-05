@@ -27,7 +27,11 @@ class MenuBar extends React.Component {
             
             <Tabs defaultActiveKey="dashboard" id="uncontrolled-tab-example">
                     <Tab eventKey="dashboard" title="Dashboard">
-                        <DashBoard user={this.props.user}/>
+                        <DashBoard 
+                            user={this.props.user}
+                            tickets={this.props.tickets}
+                            projects={this.props.projects}
+                            />
                     </Tab>
                     <Tab eventKey="tickets" title="Tickets">
                         {console.log("menu_bar tickets",this.props)}
@@ -35,13 +39,16 @@ class MenuBar extends React.Component {
                             user={this.props.user}
                             toggleModal={this.props.toggleModal} 
                             tickets={this.props.tickets}
+                            projects={this.props.projects}
                         />
                 
                     </Tab>
                     <Tab eventKey="projects" title="Projects">
                         <ProjectsPage 
                             user={this.props.user}
-                            toggleModal={this.props.toggleModal} />
+                            toggleModal={this.props.toggleModal} 
+                            projects={this.props.projects}
+                            />
                     </Tab>
                 </Tabs>
             </div>

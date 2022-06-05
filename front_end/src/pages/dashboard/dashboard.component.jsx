@@ -15,91 +15,43 @@ class DashBoard extends React.Component {
             categoryData: {},
             typeData: {},
             userData: {},
-            user: this.props.user,
         }
     }
 
     componentDidMount() {
-        fetch('http://localhost:4000/api/dashboard/priority')
-            .then(res => res.json())
-            .then( (priority) => {
-                const configedData = this.configData("priority",Object.values(priority)[0]);
-                this.setState({"priority": Object.values(priority)[0],priorityData: configedData});
-            }
-        );
+        // fetch('http://localhost:4000/api/dashboard/priority')
+        //     .then(res => res.json())
+        //     .then( (priority) => {
+        //         const configedData = this.configData("priority",Object.values(priority)[0]);
+        //         this.setState({"priority": Object.values(priority)[0],priorityData: configedData});
+        //     }
+        // );
 
-        fetch('http://localhost:4000/api/dashboard/category')
-            .then(res => res.json())
-            .then( (category) => {
-                const configedData = this.configData("category",Object.values(category)[0]);
-                this.setState({"category": Object.values(category)[0],categoryData: configedData});
-            }
-        );
+        // fetch('http://localhost:4000/api/dashboard/category')
+        //     .then(res => res.json())
+        //     .then( (category) => {
+        //         const configedData = this.configData("category",Object.values(category)[0]);
+        //         this.setState({"category": Object.values(category)[0],categoryData: configedData});
+        //     }
+        // );
 
-        fetch('http://localhost:4000/api/dashboard/type')
-            .then(res => res.json())
-            .then( (type) => {
-                const configedData = this.configData("type",Object.values(type)[0]);
-                this.setState({"type": Object.values(type)[0],typeData: configedData});
-            }
-        );
+        // fetch('http://localhost:4000/api/dashboard/type')
+        //     .then(res => res.json())
+        //     .then( (type) => {
+        //         const configedData = this.configData("type",Object.values(type)[0]);
+        //         this.setState({"type": Object.values(type)[0],typeData: configedData});
+        //     }
+        // );
 
-        fetch(`http://localhost:4000/api/dashboard/tickets/${this.props.user}`)
-            .then(res => res.json())
-            .then( (user) => {
-                const configedData = this.configData("user",Object.values(user)[0]);
-                this.setState({"user": Object.values(user)[0],userData: configedData});
-            }); 
+        // fetch(`http://localhost:4000/api/dashboard/tickets/${this.props.user}`)
+        //     .then(res => res.json())
+        //     .then( (user) => {
+        //         const configedData = this.configData("user",Object.values(user)[0]);
+        //         this.setState({"user": Object.values(user)[0],userData: configedData});
+        //     }); 
     }
 
-    configData(type, inputData) {
-        const dataMap = {};
-        const labels = [];
-        const dataArray = [];
-        const inputType = type === 'user' ? 'type' : type;
-
-        // takes the JSON data and creates a map of the ticket type (key) 
-        // to the number of tickets (value)
-        // doing it this way such that string and int data types will work for 
-        // creating the new datasets
-        inputData.map(item => {
-            if(!dataMap[item[inputType]]) {
-                dataMap[item[inputType]] = 1;
-            }
-            else dataMap[item[inputType]]++;
-            return item;
-        })
-
-        // turns the map into two arrays for labels and number of tickets
-        for (let property in dataMap) {
-            if (!dataMap.hasOwnProperty(property)) {
-                continue;
-            }
-            labels.push(property);
-            dataArray.push(dataMap[property]);
-        }
-        
-        // blank dataset
-        const newDataSet = {
-            labels: [],
-            datasets: [{label:type,data:[],
-                    backgroundColor: [
-                        this.randomColor(0.2),
-                        this.randomColor(0.2),
-                        this.randomColor(0.2),
-                        this.randomColor(0.2),
-                        this.randomColor(0.2),
-                        this.randomColor(0.2)
-                    ],
-                    
-                    borderWidth: 1}],
-        };
-
-        newDataSet.labels = labels;
-        newDataSet.datasets[0].data = dataArray;
-        
-        return newDataSet;
-    }
+    
 
     randomColor(opacity) {
         return `rgba(${Math.floor(Math.random()*255)}, 
