@@ -31,6 +31,10 @@ class MenuBar extends React.Component {
                             user={this.props.user}
                             tickets={this.props.tickets}
                             projects={this.props.projects}
+                            priorityData= {this.props.priorityData}
+                            categoryData= {this.props.categoryData}
+                            typeData= {this.props.typeData}
+                            userData= {this.props.userData}
                             />
                     </Tab>
                     <Tab eventKey="tickets" title="Tickets">

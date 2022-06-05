@@ -30,12 +30,12 @@ export function configData(type, inputData) {
         labels: [],
         datasets: [{label:type,data:[],
                 backgroundColor: [
-                    this.randomColor(0.2),
-                    this.randomColor(0.2),
-                    this.randomColor(0.2),
-                    this.randomColor(0.2),
-                    this.randomColor(0.2),
-                    this.randomColor(0.2)
+                    _randomColor(0.2),
+                    _randomColor(0.2),
+                    _randomColor(0.2),
+                    _randomColor(0.2),
+                    _randomColor(0.2),
+                    _randomColor(0.2)
                 ],
                 
                 borderWidth: 1}],
@@ -45,4 +45,11 @@ export function configData(type, inputData) {
     newDataSet.datasets[0].data = dataArray;
     
     return newDataSet;
+}
+
+function _randomColor(opacity) {
+    return `rgba(${Math.floor(Math.random()*255)}, 
+                 ${Math.floor(Math.random()*255)}, 
+                 ${Math.floor(Math.random()*255)}, 
+                 ${opacity})`
 }

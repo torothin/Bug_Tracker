@@ -16,7 +16,7 @@ export function getTicketsByUser (user) {
     let dataLoad = fetch(`${default_location}/api/dashboard/tickets/${user}`)
         .then(res => res.json())
         .then( (tickets) => {
-            return Object.values(tickets)[0];
+          return Object.values(tickets)[0];
 
     });
     
