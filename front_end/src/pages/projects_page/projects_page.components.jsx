@@ -14,11 +14,7 @@ class ProjectsPage extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`http://localhost:4000/api/dashboard/projects/${this.props.user}`)
-            .then(res => res.json())
-            .then( (projects) => {
-                this.setState(projects);
-            }); 
+        
     }
 
     formatDateForDisplay (item) {
@@ -34,8 +30,8 @@ class ProjectsPage extends React.Component {
                         
                         <tr key={"header"}>
                             {
-                                this.state.projects.length &&
-                                Object.keys(this.state.projects[0]).map((key) => (
+                                //this.props.projects.length &&
+                                Object.keys(this.props.projects[0]).map((key) => (
                                     <th>{key}</th>
                                 ))
                             }

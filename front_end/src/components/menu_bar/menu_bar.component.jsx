@@ -18,7 +18,7 @@ class MenuBar extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log("MenuBar componentDidUpdate")
+       
     }
 
     render() {
@@ -38,7 +38,6 @@ class MenuBar extends React.Component {
                             />
                     </Tab>
                     <Tab eventKey="tickets" title="Tickets">
-                        {console.log("menu_bar tickets",this.props)}
                         <TicketsPage 
                             user={this.props.user}
                             toggleModal={this.props.toggleModal} 

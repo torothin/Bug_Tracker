@@ -43,15 +43,18 @@ class Screen extends React.Component {
 
     let tickets = await getTicketsByUser(this.props.user);
 
+    let projects = await getProjects();
+
     const dashboardPromises = await this.getDashboardData();
     
-    await Promise.all([...dashboardPromises, tickets,usersLoad])
-      .then(([ticketsByCategory,ticketsByType,ticketsByPriority,ticketsByUser,tickets,usersLoad])=>{
+    await Promise.all([...dashboardPromises, tickets, usersLoad, projects])
+      .then(([ticketsByCategory,ticketsByType,ticketsByPriority,ticketsByUser,tickets,usersLoad, projects])=>{
         this.setState({
           ...this.state,
           loaded: true,
           tickets: tickets,
           users: usersLoad,
+          projects: projects,
           priorityData: configData("priority",ticketsByPriority),
           categoryData: configData("category",ticketsByCategory),
           typeData: configData("type",ticketsByType),
@@ -72,15 +75,18 @@ class Screen extends React.Component {
 
       let tickets = await getTicketsByUser(this.props.user);
 
+      let projects = await getProjects();
+
       const dashboardPromises = await this.getDashboardData();
       
-      await Promise.all([...dashboardPromises, tickets,usersLoad])
-        .then(([ticketsByCategory,ticketsByType,ticketsByPriority,ticketsByUser,tickets,usersLoad])=>{
+      await Promise.all([...dashboardPromises, tickets,usersLoad, projects])
+        .then(([ticketsByCategory,ticketsByType,ticketsByPriority,ticketsByUser,tickets,usersLoad, projects])=>{
           this.setState({
             ...this.state,
             loaded: true,
             tickets: tickets,
             users: usersLoad,
+            projects: projects,
             showModal: !this.state.showModal, 
             priorityData: configData("priority",ticketsByPriority),
             categoryData: configData("category",ticketsByCategory),

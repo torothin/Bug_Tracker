@@ -28,7 +28,8 @@ class AddTicket extends React.Component {
         let projectLoad = fetch(`${default_location}/api/projects`)
             .then(res => res.json())
             .then( (projects) => {
-                this.setState({...this.state, projects: Object.values(projects)[0]}); 
+                let projectsArray = Object.values(projects)[0];
+                this.setState({...this.state, projects: projectsArray,"project_id":projectsArray[0].id}); 
         });
 
         let userLoad = fetch(`${default_location}/api/users`)

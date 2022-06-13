@@ -25,18 +25,15 @@ class EditTicket extends React.Component {
         }
     }
     async componentWillMount() {
-        console.log("edit ticket componentWillMount")
         let projectLoad = fetch(`${default_location}/api/projects`)
             .then(res => res.json())
             .then( (projects) => {
-                console.log("projects",Object.values(projects)[0])
                 return Object.values(projects)[0];
         });
 
         let userLoad = fetch(`${default_location}/api/users`)
             .then(res => res.json())
             .then( (users) => {
-                console.log("users",Object.values(users)[0])
                 return Object.values(users)[0];
         });
         
@@ -46,13 +43,11 @@ class EditTicket extends React.Component {
                 const ticketsArray = Object.values(tickets)[0];
                 const ticket = ticketsArray[0];
                 ticket.est_complete_date = new Date(ticket.est_complete_date);
-                console.log("ticket",ticket)
                 return ticket;
         });
 
         await Promise.all([projectLoad, userLoad, ticketsLoad])
         .then(([projects, users, ticket])=>{
-            console.log("update after promise")
             this.setState({
                 ...this.state,
                 loaded: !this.state.loaded,
@@ -70,13 +65,6 @@ class EditTicket extends React.Component {
             },()=>{console.log("this.state",this.state)});
         });
         
-    }
-    componentDidMount() {
-        console.log("edit ticket componentDidMount")
-    }
-    
-    componentDidUpdate() {
-        console.log("edit ticket componentDidUpdate");
     }
 
     myChangeHandler = (event) => {
@@ -144,13 +132,6 @@ class EditTicket extends React.Component {
             this.state["creator_id"] + "&creation_date=" +
             dateToString(new Date()) + "&est_complete_date=" +
             dateToString(this.state["est_complete_date"]);
-
-        
-        console.log(sql)
-
-        // var xhr = new XMLHttpRequest();
-        // xhr.open('PUT',sql);
-        // xhr.send();
         
         const ticketUpdate = fetch(sql,{
             method: 'PUT'
