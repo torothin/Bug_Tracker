@@ -36,14 +36,15 @@ class ProjectsPage extends React.Component {
                                 ))
                             }
                             <td></td>
+                            <td></td>
                         </tr>
                         
                     </thead>
                     <tbody>
                     
                     {
-                        this.state.projects &&
-                        this.state.projects.map((item) => (
+                        this.props.projects &&
+                        this.props.projects.map((item) => (
                             <tr key={item.id}>
                                 {
                                     this.formatDateForDisplay(item)
@@ -58,6 +59,11 @@ class ProjectsPage extends React.Component {
                                     onClick={()=>{this.props.toggleModal('Edit Project', item.id)}}
                                     size="sm"
                                     variant="secondary">Edit</Button></td>
+                                <td><Button 
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={()=>{this.props.toggleModal('Delete Project', item.id)}}
+                                    >Delete</Button></td>
                             </tr>
                         ))
                     }
