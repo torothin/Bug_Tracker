@@ -39,26 +39,29 @@ class TicketsPage extends React.Component {
                 
                     <thead>
                         <tr key={"header"}>
-                        <td></td>
-                        <td></td>
                         {
-                            
-                            // this.props.tickets.length > 0
-                            // &&
                             Object.keys(this.props.tickets[0]).map((key) => (
                                 <th>{key}</th>
                             ))
                         }
+                        <td></td>
+                        <td></td>
                         </tr>
                     </thead>
                     <tbody>
 
                     {
-                        // this.props.tickets.length > 0 
-                        // &&
                         this.props.tickets.map((item) => (
         
                             <tr key={item.id}>
+                                {
+                                    this.formatDateForDisplay(item)
+                                }
+                                {
+                                    Object.values(item).map((val) => (
+                                     <td>{val}</td>
+                                    ))
+                                }
                                 <td><Button 
                                     variant="secondary"
                                     size="sm"
@@ -69,14 +72,6 @@ class TicketsPage extends React.Component {
                                     size="sm"
                                     onClick={()=>{this.props.toggleModal('Delete Ticket', item.id)}}
                                     >Delete</Button></td>
-                                {
-                                    this.formatDateForDisplay(item)
-                                }
-                                {
-                                    Object.values(item).map((val) => (
-                                     <td>{val}</td>
-                                    ))
-                                }
                                 
                             </tr>
                         ))

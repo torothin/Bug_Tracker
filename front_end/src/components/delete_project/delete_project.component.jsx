@@ -1,16 +1,13 @@
 import React from 'react';
-import { InputGroup, FormControl, Form, Button, Col, Row } from 'react-bootstrap';
-import DatePicker from "react-datepicker";
-import './delete_ticket.styles.scss';
+import { Form, Button } from 'react-bootstrap';
+import './delete_project.styles.scss';
 import "react-datepicker/dist/react-datepicker.css";
 import { default_location } from '../../helpers/default_location';
-import { dateToString } from '../../helpers/date_handler';
 
-class DeleteTicket extends React.Component {
+class DeleteProject extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            
         }
     }
 
@@ -22,25 +19,21 @@ class DeleteTicket extends React.Component {
 
     async creatSQLQuery() {
 
-        var sql = default_location + "/api/tickets/" + 
+        var sql = default_location + "/api/projects/" + 
             this.props.editId;
             
-        const ticketDelete = fetch(sql,{
+        const projectUpdate = fetch(sql,{
             method: 'DELETE'
-        })
+            })
             .then(res => {
                 res.json()
                 console.log(res)
             })
-            
-        
-        console.log("ticketDelete",ticketDelete)
-        
-        await Promise.all([ticketDelete])
+         
+        await Promise.all([projectUpdate])
         .then(()=>{
             return Promise;
         });
-        
     }
 
     render() {
@@ -55,4 +48,4 @@ class DeleteTicket extends React.Component {
     }
 }
 
-export default DeleteTicket;
+export default DeleteProject;

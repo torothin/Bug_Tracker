@@ -6,6 +6,7 @@ import AddProject from '../add_project/add_project.component';
 import EditProject from '../edit_project/edit_project.components';
 import EditTicket from '../edit_ticket/edit_ticket.component';
 import DeleteTicket from '../delete_ticket/delete_ticket.component';
+import DeleteProject from '../delete_project/delete_project.component';
 
 const PopupWindow = (props) => (
    
@@ -58,6 +59,16 @@ const PopupWindow = (props) => (
                      props.type === 'Delete Ticket'
                      &&
                      <DeleteTicket
+                         users={props.users}
+                         user={props.user}
+                         toggleModal={props.toggleModal}
+                         editId={props.editId}
+                     />
+                }
+                {
+                     props.type === 'Delete Project'
+                     &&
+                     <DeleteProject
                          users={props.users}
                          user={props.user}
                          toggleModal={props.toggleModal}
